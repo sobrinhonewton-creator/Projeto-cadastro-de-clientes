@@ -2,7 +2,7 @@
 
 Aplicacao de console em C# para cadastro e listagem de clientes. O objetivo do projeto e demonstrar fundamentos de programacao, organizacao de classes, validacao basica de entrada e estrutura minima de um projeto .NET.
 
-## Funcionalidades
+# Funcionalidades
 
 - Cadastro de clientes com nome e email.
 - Validacao simples de campos obrigatorios.

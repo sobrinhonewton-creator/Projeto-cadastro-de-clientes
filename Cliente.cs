@@ -1,13 +1,16 @@
+using System;
+
 namespace CadastroDeClientes;
 
-public sealed class Cliente
+internal class Cliente
 {
-    public Cliente(string nome, string email)
-    {
-        Nome = nome;
-        Email = email;
-    }
+    public int Id { get; set; }
 
-    public string Nome { get; }
-    public string Email { get; }
+    public string Nome { get; set; } = string.Empty;
+
+    public string Email { get; set; } = string.Empty;
+
+    public string Telefone { get; set; } = string.Empty;
+
+    public DateTime DataCadastro { get; set; } = DateTime.Now;
 }
