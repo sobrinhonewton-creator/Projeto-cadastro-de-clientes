@@ -1,12 +1,20 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using CadastroDeClientes.Repositories;
 
 namespace CadastroDeClientes;
 
 internal class Program
 {
-    private static readonly List<Cliente> clientes = new List<Cliente>();
+private static readonly string caminhoArquivo =
+    Path.Combine(Directory.GetCurrentDirectory(), "clientes.json");
+
+private static readonly JsonClientesRepository repositorio =
+    new(caminhoArquivo);
+
+private static readonly List<Cliente> clientes =
+    repositorio.Carregar();
 
     private static void Main()
 {
@@ -176,7 +184,10 @@ internal class Program
     if (!string.IsNullOrWhiteSpace(novoTelefone))
     {
         cliente.Telefone = novoTelefone;
+    
+    repositorio.Salvar(clientes);
     }
+
 
     Console.WriteLine();
     Console.WriteLine("Cliente atualizado com sucesso.");
@@ -223,7 +234,8 @@ internal class Program
     }
 
     clientes.Remove(cliente);
-
+    repositorio.Salvar(clientes);
+    
     Console.WriteLine("Cliente excluído com sucesso.");
 
     Pausar();
@@ -317,6 +329,7 @@ internal class Program
     };
 
     clientes.Add(cliente);
+    repositorio.Salvar(clientes);
 
     Console.WriteLine();
     Console.WriteLine($"Cliente cadastrado com sucesso. ID: {cliente.Id}");
