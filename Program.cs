@@ -242,14 +242,13 @@ internal class Program
         !string.IsNullOrWhiteSpace(c.Telefone)
     );
 
-    int semTelefone = clientes.Count(c =>
-        string.IsNullOrWhiteSpace(c.Telefone)
-    );
+    int cadastradosHoje = clientes.Count(c =>
+        c.DataCadastro.Date == DateTime.Now.Date);
 
     Console.WriteLine($"Total de clientes: {totalClientes}");
     Console.WriteLine($"Clientes com telefone: {comTelefone}");
-    Console.WriteLine($"Clientes sem telefone: {semTelefone}");
-
+    Console.WriteLine($"Clientes cadastrados hoje: {cadastradosHoje}");
+    Console.WriteLine($"Último ID utilizado: {clientes.Max(c => c.Id)}");
     Pausar();
 }
 
@@ -313,7 +312,8 @@ internal class Program
         Id = novoId,
         Nome = nome,
         Email = email,
-        Telefone = telefone
+        Telefone = telefone,
+        DataCadastro = DateTime.Now
     };
 
     clientes.Add(cliente);
