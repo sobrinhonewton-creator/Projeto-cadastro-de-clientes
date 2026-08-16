@@ -2,7 +2,7 @@ using System;
 
 namespace CadastroDeClientes;
 
-internal class Cliente
+public sealed class Cliente
 {
     public int Id { get; set; }
 

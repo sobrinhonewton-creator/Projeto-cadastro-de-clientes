@@ -1,9 +1,8 @@
 using System.Text.Json;
+using CadastroDeClientes;
 
 namespace CadastroDeClientes.Repositories
 {
-    public class Cliente { }
-
     public class JsonClientesRepository
     {
         private readonly string _caminho;
