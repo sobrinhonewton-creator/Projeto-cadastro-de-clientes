@@ -77,9 +77,51 @@ private static readonly List<Cliente> clientes =
 }
 
     private static void Excluir()
+{
+    Console.Clear();
+
+    Console.WriteLine("=== EXCLUIR CLIENTE ===");
+    Console.WriteLine();
+
+    Console.Write("Informe o ID do cliente: ");
+
+    if (!int.TryParse(Console.ReadLine(), out int id) || id <= 0)
     {
-        throw new NotImplementedException();
+        Console.WriteLine("ID inválido.");
+        Pausar();
+        return;
     }
+
+    Cliente? cliente = clientes.FirstOrDefault(c => c.Id == id);
+
+    if (cliente is null)
+    {
+        Console.WriteLine("Cliente não encontrado.");
+        Pausar();
+        return;
+    }
+
+    Console.WriteLine();
+    Console.WriteLine($"Cliente selecionado: {cliente.Nome}");
+    Console.Write("Confirma a exclusão? (S/N): ");
+
+    string resposta = Console.ReadLine()?.Trim() ?? string.Empty;
+
+    if (!resposta.Equals("S", StringComparison.OrdinalIgnoreCase))
+    {
+        Console.WriteLine("Exclusão cancelada.");
+        Pausar();
+        return;
+    }
+
+    clientes.Remove(cliente);
+    repositorio.Salvar(clientes);
+
+    Console.WriteLine();
+    Console.WriteLine("Cliente excluído com sucesso.");
+
+    Pausar();
+}
 
     private static void Buscar()
 {
@@ -226,16 +268,25 @@ private static readonly List<Cliente> clientes =
     int totalClientes = clientes.Count;
 
     int comTelefone = clientes.Count(c =>
-        !string.IsNullOrWhiteSpace(c.Telefone)
-    );
+        !string.IsNullOrWhiteSpace(c.Telefone));
 
     int cadastradosHoje = clientes.Count(c =>
-        c.DataCadastro.Date == DateTime.Now.Date);
+        c.DataCadastro.Date == DateTime.Today);
 
     Console.WriteLine($"Total de clientes: {totalClientes}");
     Console.WriteLine($"Clientes com telefone: {comTelefone}");
     Console.WriteLine($"Clientes cadastrados hoje: {cadastradosHoje}");
-    Console.WriteLine($"Último ID utilizado: {clientes.Max(c => c.Id)}");
+
+    if (clientes.Count > 0)
+    {
+        int ultimoId = clientes.Max(c => c.Id);
+        Console.WriteLine($"Último ID utilizado: {ultimoId}");
+    }
+    else
+    {
+        Console.WriteLine("Último ID utilizado: nenhum");
+    }
+
     Pausar();
 }
 
