@@ -76,6 +76,11 @@ private static readonly List<Cliente> clientes =
     }
 }
 
+    private static void Excluir()
+    {
+        throw new NotImplementedException();
+    }
+
     private static void Buscar()
 {
     Console.Clear();
@@ -119,7 +124,7 @@ private static readonly List<Cliente> clientes =
 
     Console.Write("Informe o ID do cliente: ");
 
-    if (!int.TryParse(Console.ReadLine(), out int id))
+    if (!int.TryParse(Console.ReadLine(), out int id) || id <= 0)
     {
         Console.WriteLine("ID inválido.");
         Pausar();
@@ -128,7 +133,7 @@ private static readonly List<Cliente> clientes =
 
     Cliente? cliente = clientes.FirstOrDefault(c => c.Id == id);
 
-    if (cliente == null)
+    if (cliente is null)
     {
         Console.WriteLine("Cliente não encontrado.");
         Pausar();
@@ -141,102 +146,72 @@ private static readonly List<Cliente> clientes =
     Console.WriteLine();
 
     Console.Write($"Nome ({cliente.Nome}): ");
-    string novoNome = Console.ReadLine()?.Trim() ?? "";
+    string novoNome = Console.ReadLine()?.Trim() ?? string.Empty;
 
     Console.Write($"E-mail ({cliente.Email}): ");
-    string novoEmail = Console.ReadLine()?.Trim() ?? "";
+    string novoEmail = Console.ReadLine()?.Trim() ?? string.Empty;
 
     Console.Write($"Telefone ({cliente.Telefone}): ");
-    string novoTelefone = Console.ReadLine()?.Trim() ?? "";
+    string novoTelefone = Console.ReadLine()?.Trim() ?? string.Empty;
 
-    if (!string.IsNullOrWhiteSpace(novoNome))
+    // Define os valores finais sem modificar o cliente ainda
+    string nomeFinal = string.IsNullOrWhiteSpace(novoNome)
+        ? cliente.Nome
+        : novoNome;
+
+    string emailFinal = string.IsNullOrWhiteSpace(novoEmail)
+        ? cliente.Email
+        : novoEmail;
+
+    string telefoneFinal = string.IsNullOrWhiteSpace(novoTelefone)
+        ? cliente.Telefone
+        : novoTelefone;
+
+    // Valida todos os dados antes de modificar o cliente
+    if (string.IsNullOrWhiteSpace(nomeFinal))
     {
-        cliente.Nome = novoNome;
+        Console.WriteLine("O nome é obrigatório.");
+        Pausar();
+        return;
     }
 
-    if (!string.IsNullOrWhiteSpace(novoEmail))
+    if (!Validacoes.ValidarEmail(emailFinal))
     {
-        if (!novoEmail.Contains("@"))
-        {
-            Console.WriteLine("O novo e-mail é inválido.");
-            Pausar();
-            return;
-        }
-
-        bool emailEmUso = clientes.Any(c =>
-            c.Id != cliente.Id &&
-            c.Email.Equals(
-                novoEmail,
-                StringComparison.OrdinalIgnoreCase
-            )
-        );
-
-        if (emailEmUso)
-        {
-            Console.WriteLine("Esse e-mail já pertence a outro cliente.");
-            Pausar();
-            return;
-        }
-
-        cliente.Email = novoEmail;
+        Console.WriteLine("O e-mail informado é inválido.");
+        Pausar();
+        return;
     }
 
-    if (!string.IsNullOrWhiteSpace(novoTelefone))
+    if (!Validacoes.ValidarTelefone(telefoneFinal))
     {
-        cliente.Telefone = novoTelefone;
-    
+        Console.WriteLine("O telefone deve possuir 10 ou 11 números.");
+        Pausar();
+        return;
+    }
+
+    bool emailEmUso = clientes.Any(c =>
+        c.Id != cliente.Id &&
+        c.Email.Equals(
+            emailFinal,
+            StringComparison.OrdinalIgnoreCase));
+
+    if (emailEmUso)
+    {
+        Console.WriteLine("Esse e-mail já pertence a outro cliente.");
+        Pausar();
+        return;
+    }
+
+    // Somente altera depois que todas as validações passaram
+    cliente.Nome = nomeFinal;
+    cliente.Email = emailFinal;
+    cliente.Telefone = telefoneFinal;
+
+    // Salva independentemente do campo que foi alterado
     repositorio.Salvar(clientes);
-    }
-
 
     Console.WriteLine();
     Console.WriteLine("Cliente atualizado com sucesso.");
-
-    Pausar();
-}
-
-    private static void Excluir()
-{
-    Console.Clear();
-
-    Console.WriteLine("=== EXCLUIR CLIENTE ===");
-    Console.WriteLine();
-
-    Console.Write("Informe o ID do cliente: ");
-
-    if (!int.TryParse(Console.ReadLine(), out int id))
-    {
-        Console.WriteLine("ID inválido.");
-        Pausar();
-        return;
-    }
-
-    Cliente? cliente = clientes.FirstOrDefault(c => c.Id == id);
-
-    if (cliente == null)
-    {
-        Console.WriteLine("Cliente não encontrado.");
-        Pausar();
-        return;
-    }
-
-    Console.WriteLine();
-    Console.WriteLine($"Cliente: {cliente.Nome}");
-    Console.Write("Confirma a exclusão? (S/N): ");
-
-    string resposta = Console.ReadLine()?.Trim() ?? "";
-
-    if (!resposta.Equals("S", StringComparison.OrdinalIgnoreCase))
-    {
-        Console.WriteLine("Exclusão cancelada.");
-        Pausar();
-        return;
-    }
-
-    clientes.Remove(cliente);
-    repositorio.Salvar(clientes);
-    
-    Console.WriteLine("Cliente excluído com sucesso.");
 
     Pausar();
 }
