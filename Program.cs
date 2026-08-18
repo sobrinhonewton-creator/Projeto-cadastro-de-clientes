@@ -290,29 +290,20 @@ private static readonly List<Cliente> clientes =
     Pausar();
 }
 
-    private static void Cadastrar()
+private static void Cadastrar()
 {
     Console.Clear();
 
     Console.WriteLine("=== CADASTRAR CLIENTE ===");
     Console.WriteLine();
 
-    Console.Write("Nome: ");
-    string nome = Console.ReadLine()?.Trim() ?? "";
+    string nome = LerCampoObrigatorio("Nome");
 
-    if (string.IsNullOrWhiteSpace(nome))
+    string email = LerCampoObrigatorio("E-mail");
+
+    if (!Validacoes.ValidarEmail(email))
     {
-        Console.WriteLine("O nome é obrigatório.");
-        Pausar();
-        return;
-    }
-
-    Console.Write("E-mail: ");
-    string email = Console.ReadLine()?.Trim() ?? "";
-
-    if (string.IsNullOrWhiteSpace(email) || !email.Contains("@"))
-    {
-        Console.WriteLine("E-mail inválido.");
+        Console.WriteLine("O e-mail informado é inválido.");
         Pausar();
         return;
     }
@@ -320,9 +311,7 @@ private static readonly List<Cliente> clientes =
     bool emailExiste = clientes.Any(c =>
         c.Email.Equals(
             email,
-            StringComparison.OrdinalIgnoreCase
-        )
-    );
+            StringComparison.OrdinalIgnoreCase));
 
     if (emailExiste)
     {
@@ -331,12 +320,11 @@ private static readonly List<Cliente> clientes =
         return;
     }
 
-    Console.Write("Telefone: ");
-    string telefone = Console.ReadLine()?.Trim() ?? "";
+    string telefone = LerCampoObrigatorio("Telefone");
 
-    if (string.IsNullOrWhiteSpace(telefone))
+    if (!Validacoes.ValidarTelefone(telefone))
     {
-        Console.WriteLine("O telefone é obrigatório.");
+        Console.WriteLine("O telefone deve possuir 10 ou 11 números.");
         Pausar();
         return;
     }
@@ -345,7 +333,7 @@ private static readonly List<Cliente> clientes =
         ? 1
         : clientes.Max(c => c.Id) + 1;
 
-    Cliente cliente = new Cliente
+    var cliente = new Cliente
     {
         Id = novoId,
         Nome = nome,
@@ -407,7 +395,7 @@ static void Pausar()
                 return valor;
             }
 
-            Console.WriteLine($"{rotulo} e obrigatorio.");
+            Console.WriteLine($"{rotulo} é obrigatório.");
         }
     }
 }
